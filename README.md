@@ -1,2 +1,2 @@
-# Radialaksen_mini_prosekt
-Radialaksens mini proseks 
+# Radialaksen_mini_project
+Radialaksens mini project 
