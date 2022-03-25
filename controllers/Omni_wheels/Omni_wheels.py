@@ -5,7 +5,8 @@ robot = Robot()
 timestep = int(robot.getBasicTimeStep())
 
 #inseretes 
-motor1 = robot.getDevice('wheel1') 
+v = -10
+motor1 = robot.getDevice('wheel1')
 motor2 = robot.getDevice('wheel2') 
 motor3 = robot.getDevice('wheel3')
 ds = robot.getDevice('position_sensor_wheel1')
@@ -13,11 +14,19 @@ ds.enable(timestep)
 
 # Main loop:
 # - perform simulation steps until Webots is stopping the controller
+
+
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
-    motor1.setPosition(100.0) 
-    motor2.setPosition(100.0)
-    motor3.setPosition(100.0)   
+    motor1.setPosition(float('INF'))
+    motor2.setPosition(float('INF'))
+    motor3.setPosition(float('INF'))
+    motor1.setVelocity(v) 
+    motor2.setVelocity(-v)
+    motor3.setVelocity(0.0)   
+    
+   
+    
     
     ###################### - Small whells - #####################
     """ 10 is the max-speed of the small wheels""" 
