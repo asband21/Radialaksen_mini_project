@@ -7,8 +7,8 @@ WorldInfo {
   basicTimeStep 8
 }
 Viewpoint {
-  orientation -0.1390533715714493 -0.18270038064932567 0.9732855340367511 4.877244238602676
-  position 0.17513281238489764 3.533005900923168 1.769572910440566
+  orientation -0.0951637211790789 -0.105058156684939 -0.9899023436103752 1.3520139801551452
+  position -0.15896692751963673 0.5204621159413366 0.05971533336053321
   follow "robot"
 }
 TexturedBackground {
@@ -22,6 +22,100 @@ DEF OMNI_WHEELS Robot {
   translation 0 0 0.06
   rotation 0 1 0 0
   children [
+    DEF transform23 Transform {
+      translation 0.1 0 0.08
+      children [
+        DEF distSensor23 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+        }
+      ]
+    }
+    DEF transform31 Transform {
+      translation -0.05 0.0866025 0.08
+      rotation 0 0 1 2.094399693899575
+      children [
+        DEF distSensor31 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(1)"
+        }
+      ]
+    }
+    DEF transform12 Transform {
+      translation -0.05 -0.0866025 0.08
+      rotation 0 0 1 -2.094395001079161
+      children [
+        DEF distSensor12 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(2)"
+        }
+      ]
+    }
+    DEF transform3 Transform {
+      translation 0.05 0.0866025 0.08
+      rotation 0 0 1 1.0472003061004251
+      children [
+        DEF distSensor3 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(3)"
+        }
+      ]
+    }
+    DEF transform1 Transform {
+      translation -0.1 -4.1e-11 0.08
+      rotation 0 0 1 3.141592653589793
+      children [
+        DEF distSensor1 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(4)"
+        }
+      ]
+    }
+    DEF transform2 Transform {
+      translation 0.05 -0.0866025 0.08
+      rotation 0 0 1 -1.0471996938995747
+      children [
+        DEF distSensor2 DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(5)"
+        }
+      ]
+    }
     DEF SOLID1 Solid {
       children [
         DEF WHEEL1 HingeJoint {
@@ -233,7 +327,7 @@ DEF OMNI_WHEELS Robot {
                 }
                 endPoint Solid {
                   translation -0.02036225333482787 -0.03692946195879821 0.03692916195879821
-                  rotation 4.5985965987278917e-10 -0.7071067809779119 -0.7071067813951831 5.357638116078184
+                  rotation 4.5985964524049865e-10 -0.7071067809779119 -0.707106781395183 5.357638116078184
                   children [
                     DEF r8 Transform {
                       rotation -1 0 0 0.76
@@ -730,7 +824,7 @@ DEF OMNI_WHEELS Robot {
           geometry Cylinder {
             height 0.15
             radius 0.1
-            subdivision 18
+            subdivision 50
           }
         }
       ]
