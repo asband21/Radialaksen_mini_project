@@ -22,15 +22,9 @@ while robot.step(timestep) != -1:
     motor1.setPosition(float('INF'))
     motor2.setPosition(float('INF'))
     motor3.setPosition(float('INF'))
-    motor1.setVelocity(0*v)
-    motor2.setVelocity(0*v)
-    motor3.setVelocity(0.0*v)
-    
-    class DistanceSensor (Device):
-        def enable(self, samplingPeriod):
-        def disable(self):
-        def getSamplingPeriod(self):
-        def getValue(self):
+    motor1.setVelocity(0.80*v)
+    motor2.setVelocity(-0.80*v)
+    motor3.setVelocity(0.30*v)
 
 
 
