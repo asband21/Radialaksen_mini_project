@@ -26,7 +26,7 @@ DEF OMNI_WHEELS Robot {
     DEF transform23 Transform {
       translation 0.1 0 0.08
       children [
-        DEF distSensor23 DistanceSensor {
+        DistanceSensor {
           children [
             Shape {
               geometry Box {
@@ -34,8 +34,7 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
-          name "Sharp's IR sensor GP2Y0A710K0F"
-          model "GP2D120"
+          name "distance sensor(4)"
         }
       ]
     }
@@ -43,7 +42,7 @@ DEF OMNI_WHEELS Robot {
       translation -0.05 0.0866025 0.08
       rotation 0 0 1 2.094399693899575
       children [
-        DEF distSensor31 DistanceSensor {
+        DistanceSensor {
           children [
             Shape {
               geometry Box {
@@ -51,7 +50,7 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
-          name "distance sensor(1)"
+          name "distance sensor(6)"
         }
       ]
     }
@@ -59,7 +58,7 @@ DEF OMNI_WHEELS Robot {
       translation -0.05 -0.0866025 0.08
       rotation 0 0 1 -2.094395001079161
       children [
-        DEF distSensor12 DistanceSensor {
+        DEF distance_sensor(12) DistanceSensor {
           children [
             Shape {
               geometry Box {
@@ -75,7 +74,39 @@ DEF OMNI_WHEELS Robot {
       translation 0.05 0.0866025 0.08
       rotation 0 0 1 1.0472003061004251
       children [
-        DEF distSensor3 DistanceSensor {
+        DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(5)"
+        }
+      ]
+    }
+    DEF transform1 Transform {
+      translation -0.1 -4.1e-11 0.08
+      rotation 0 0 1 3.141592653589793
+      children [
+        DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(1)"
+        }
+      ]
+    }
+    DEF transform2 Transform {
+      translation 0.05 -0.0866025 0.08
+      rotation 0 0 1 -1.0471996938995747
+      children [
+        DistanceSensor {
           children [
             Shape {
               geometry Box {
@@ -87,27 +118,11 @@ DEF OMNI_WHEELS Robot {
         }
       ]
     }
-    DEF transform1 Transform {
-      translation -0.1 -4.1e-11 0.08
-      rotation 0 0 1 3.141592653589793
-      children [
-        DEF distSensor1 DistanceSensor {
-          children [
-            Shape {
-              geometry Box {
-                size 0.01 0.01 0.01
-              }
-            }
-          ]
-          name "distance sensor(4)"
-        }
-      ]
-    }
-    DEF transform2 Transform {
+    DEF transform-test Transform {
       translation 0.05 -0.0866025 0.08
       rotation 0 0 1 -1.0471996938995747
       children [
-        DEF distSensor2 DistanceSensor {
+        DistanceSensor {
           children [
             Shape {
               geometry Box {
@@ -115,7 +130,7 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
-          name "distance sensor(5)"
+          name "distance sensor(7)"
         }
       ]
     }

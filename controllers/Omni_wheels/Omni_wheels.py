@@ -10,7 +10,7 @@ motor1 = robot.getDevice('wheel1')
 motor2 = robot.getDevice('wheel2')
 motor3 = robot.getDevice('wheel3')
 ps = []
-psNames = ['distance sensor(1)','distance sensor(2)','distance sensor(3)','distance sensor(4)','distance sensor(5)']#,'distance sensor(6)']  #distance_sensor_array
+psNames = ['distance sensor(1)','distance sensor(2)','distance sensor(3)','distance sensor(4)','distance sensor(5)','distance sensor(6)','distance sensor(7)']  #distance_sensor_array
 for i in range(len(psNames)):
     ps.append(robot.getDevice(psNames[i]))
     ps[i].enable(timestep)
@@ -30,10 +30,12 @@ while robot.step(timestep) != -1:
     motor3.setPosition(float('INF'))
     motor1.setVelocity(0*v)
     motor2.setVelocity(0*v)
-    motor3.setVelocity(0.0*v)
+    motor3.setVelocity(0.4*v)
     psValues = []
     for i in range(len(ps)):
         psValues.append(ps[i].getValue())
+
+    print(psValues)
 
     # class DistanceSensor (Device):
     #     def enable(self, samplingPeriod):
