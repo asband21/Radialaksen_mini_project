@@ -10,6 +10,9 @@ motor1 = robot.getDevice('wheel1')
 motor2 = robot.getDevice('wheel2')
 motor3 = robot.getDevice('wheel3')
 # dist1  = robot.getDevice('
+
+
+
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
 
@@ -25,6 +28,8 @@ while robot.step(timestep) != -1:
     motor1.setVelocity(0.80*v)
     motor2.setVelocity(-0.80*v)
     motor3.setVelocity(0.30*v)
+
+
 
 
 

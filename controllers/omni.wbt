@@ -7,8 +7,8 @@ WorldInfo {
   basicTimeStep 8
 }
 Viewpoint {
-  orientation -0.0433022750259807 -0.005674145282222816 -0.9990459033762615 2.60814363160143
-  position 4.495381242322083 1.9366919773350075 -0.03490405386632876
+  orientation -0.08876983616813491 -0.027059414322822304 -0.9956845405464465 2.4200011763999756
+  position 0.4841724845578529 0.4414443299835052 0.027342725523343422
   follow "robot"
 }
 TexturedBackground {
@@ -34,6 +34,8 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
+          name "Sharp's IR sensor GP2Y0A710K0F"
+          model "GP2D120"
         }
       ]
     }
