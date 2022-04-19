@@ -1,5 +1,20 @@
 from controller import Robot, DistanceSensor
+from matplotlib.gridspec import GridSpec
+from matplotlib import pyplot as plt
+from pynput import keyboard
+from numpy import pi
+import pandas as pd
+import numpy as np
+import math
+
+
+plt.style.use('fivethirtyeight')
+
 robot = Robot()
+
+# define variable for later incremental function
+##increment = count()
+
 
 # get the time step of the current world.
 timestep = int(robot.getBasicTimeStep())
@@ -9,20 +24,68 @@ v = -10
 motor1 = robot.getDevice('wheel1')
 motor2 = robot.getDevice('wheel2')
 motor3 = robot.getDevice('wheel3')
-ps = []
-psNames = ['distance sensor(1)','distance sensor(2)','distance sensor(3)','distance sensor(4)','distance sensor(5)','distance sensor(6)','distance sensor(7)']  #distance_sensor_array
-for i in range(len(psNames)):
-    ps.append(robot.getDevice(psNames[i]))
-    ps[i].enable(timestep)
+dist_sensor = []
+#distance_sensor_array
+dist_sensor_names = ['distance sensor(1)','distance sensor(2)','distance sensor(3)','distance sensor(4)','distance sensor(5)','distance sensor(6)']#,'distance sensor(7)'] not used -
+
+for i in range(len(dist_sensor_names)):
+    dist_sensor.append(robot.getDevice(dist_sensor_names[i]))
+    dist_sensor[i].enable(timestep)
 
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
 
 
+#plot function:
+def rosePlot(valueArray):
+    data = pd.DataFrame({'value': valueArray,
+                         'bearing': range(0, 360, 60),
+                         'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
+
+    data.index = data['bearing'] * 2*pi / 360
+
+    fig = plt.figure(figsize=(8, 3))
+    gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
+
+    ax1 = fig.add_subplot(gs[0, 0])
+    ax1.bar(x=data['compass'], height=data['value'], width=1)
+    ax1.set_ylim(0, 1000)
+    ax1.spines['bottom'].set_position(('data', 0))  # Move the X axis up
+    ax1.spines['top'].set_position(('axes', 0))
+    ax1.spines['top'].set_linestyle(':')
+
+    ax2 = fig.add_subplot(gs[0, 1], projection='polar')
+    ax2.set_theta_zero_location('S')
+    ax2.set_theta_direction(-1)
+
+    max_value = 1000
+    r_offset = -100
+
+    ax2.set_rlim(0, max_value)
+    ax2.set_rorigin(r_offset)
+
+    r2 = max_value - r_offset
+    alpha = r2 - r_offset
+    v_offset = r_offset**2 / alpha
+    forward = lambda value: ((value + v_offset) * alpha)**0.5 + r_offset
+    reverse = lambda radius: (radius - r_offset) ** 2 / alpha - v_offset
+
+    ax2.set_yscale('function', functions=(
+        lambda value: np.where(value >= 0, forward(value), value),
+        lambda radius: np.where(radius > 0, reverse(radius), radius)))
+
+    ax2.set_xticklabels(data.compass)
+    ax2.set_rgrids([0, 200 ,400, 600, 800, 1000])
+    ax2.bar(x=data.index, height=data['value'], width=pi/4)
+
+    plt.show()
+
+
 # Main loop:
 # - perform simulation steps until Webots is stopping the controller
 
-
+global_sensor_values = []
+k = 0
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
     motor1.setPosition(float('INF'))
@@ -31,12 +94,20 @@ while robot.step(timestep) != -1:
     motor1.setVelocity(0*v)
     motor2.setVelocity(0*v)
     motor3.setVelocity(0.4*v)
-    psValues = []
-    for i in range(len(ps)):
-        psValues.append(ps[i].getValue())
+    current_sensor_values = []
+    for i in range(len(dist_sensor)):
+        current_sensor_values.append(dist_sensor[i].getValue())
+    global_sensor_values.append(current_sensor_values)
 
-    print(psValues)
+    if k%500 == 1:
+        rosePlot(current_sensor_values)
+        pass
+    k += 1
 
+
+
+
+    #print(global_sensor_values)
     # class DistanceSensor (Device):
     #     def enable(self, samplingPeriod):
     #     def disable(self):
@@ -46,9 +117,10 @@ while robot.step(timestep) != -1:
 
 
 
+
     ###################### - Small whells - #####################
-    """ 10 is the max-speed of the small wheels"""
-    """ Velorcity of the big wheels until  """
+    #""" 10 is the max-speed of the small wheels"""
+    #""" Velorcity of the big wheels until  """
     #motor1.setVelocity(10) #small wheels
     #motor2.setVelocity(10) #small wheels
     #motor3.setVelocity(10) #small wheels

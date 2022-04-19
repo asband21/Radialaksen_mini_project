@@ -1,7 +1,7 @@
 #VRML_SIM R2022a utf8
 WorldInfo {
   info [
-    "Thanks to Mehdi Ghanavati, Shahid Chamran University"
+    "Thanks to Mehdi Ghanavati, Shahid Chamran University whom the base model (cylinder and wheels) was created by. All code is written and made by group B302e Robotics."
   ]
   title "Omni-wheels"
   basicTimeStep 8
@@ -23,8 +23,9 @@ DEF OMNI_WHEELS Robot {
   translation 0 0 0.06
   rotation 0 1 0 0
   children [
-    DEF transform23 Transform {
-      translation 0.1 0 0.08
+    DEF transform1 Transform {
+      translation -0.1 -4.1e-11 0.08
+      rotation 0 0 1 3.141592653589793
       children [
         DistanceSensor {
           children [
@@ -34,23 +35,16 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
-          name "distance sensor(4)"
-        }
-      ]
-    }
-    DEF transform31 Transform {
-      translation -0.05 0.0866025 0.08
-      rotation 0 0 1 2.094399693899575
-      children [
-        DistanceSensor {
-          children [
-            Shape {
-              geometry Box {
-                size 0.01 0.01 0.01
-              }
-            }
+          name "distance sensor(1)"
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
           ]
-          name "distance sensor(6)"
         }
       ]
     }
@@ -67,38 +61,15 @@ DEF OMNI_WHEELS Robot {
             }
           ]
           name "distance sensor(2)"
-        }
-      ]
-    }
-    DEF transform3 Transform {
-      translation 0.05 0.0866025 0.08
-      rotation 0 0 1 1.0472003061004251
-      children [
-        DistanceSensor {
-          children [
-            Shape {
-              geometry Box {
-                size 0.01 0.01 0.01
-              }
-            }
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
           ]
-          name "distance sensor(5)"
-        }
-      ]
-    }
-    DEF transform1 Transform {
-      translation -0.1 -4.1e-11 0.08
-      rotation 0 0 1 3.141592653589793
-      children [
-        DistanceSensor {
-          children [
-            Shape {
-              geometry Box {
-                size 0.01 0.01 0.01
-              }
-            }
-          ]
-          name "distance sensor(1)"
         }
       ]
     }
@@ -115,12 +86,20 @@ DEF OMNI_WHEELS Robot {
             }
           ]
           name "distance sensor(3)"
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
+          ]
         }
       ]
     }
-    DEF transform-test Transform {
-      translation 0.05 -0.0866025 0.08
-      rotation 0 0 1 -1.0471996938995747
+    DEF transform23 Transform {
+      translation 0.1 0 0.08
       children [
         DistanceSensor {
           children [
@@ -130,7 +109,66 @@ DEF OMNI_WHEELS Robot {
               }
             }
           ]
-          name "distance sensor(7)"
+          name "distance sensor(4)"
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
+          ]
+        }
+      ]
+    }
+    DEF transform3 Transform {
+      translation 0.05 0.0866025 0.08
+      rotation 0 0 1 1.0472003061004251
+      children [
+        DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(5)"
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
+          ]
+        }
+      ]
+    }
+    DEF transform31 Transform {
+      translation -0.05 0.0866025 0.08
+      rotation 0 0 1 2.094399693899575
+      children [
+        DistanceSensor {
+          children [
+            Shape {
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance sensor(6)"
+          lookupTable [
+            0 1000 0
+            0.1 1000 0.1
+            0.2 400 0.1
+            0.3 50 0.1
+            0.4 30 0.1
+            0.5 10 0.23
+            1 1 0.5
+          ]
         }
       ]
     }
