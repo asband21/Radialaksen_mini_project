@@ -55,6 +55,60 @@ class driver:
         print(self.angle_2)
         print(self.motor_3)
         print(self.angle_3)
+
+#plot object and method:
+class dataDisplay:
+    def __init__(self, ):
+        self.max_value = 1000
+        self.r_offset = -100
+
+    def rosePlot(self, value_array):
+        data = pd.DataFrame({'value': value_array,
+                             'bearing': range(0,360, 60),
+                             'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
+        data.index = data['bearing'] * 2*pi / 360
+        print(data.index)
+        print(data['value'])
+        fig = plt.figure(figsize=(8, 3))
+        gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
+
+        ax1 = fig.add_subplot(gs[0, 0])
+        ax1.bar(x=data['compass'], height=data['value'], width=1)
+        ax1.set_ylim(0, 1000)
+        ax1.spines['bottom'].set_position(('data', 0))  # Move the X axis up
+        ax1.spines['top'].set_position(('axes', 0))
+        ax1.spines['top'].set_linestyle(':')
+
+        ax2 = fig.add_subplot(gs[0, 1], projection='polar')
+        ax2.set_theta_zero_location('S')
+        ax2.set_theta_direction(-1)
+
+        max_value = 1000
+        r_offset = -100
+
+        ax2.set_rlim(0, max_value)
+        ax2.set_rorigin(r_offset)
+
+        r2 = max_value - r_offset
+        alpha = r2 - r_offset
+        v_offset = r_offset**2 / alpha
+        forward = lambda value: ((value + v_offset) * alpha)**0.5 + r_offset
+        reverse = lambda radius: (radius - r_offset) ** 2 / alpha - v_offset
+
+        ax2.set_yscale('function', functions=(
+            lambda value: np.where(value >= 0, forward(value), value),
+            lambda radius: np.where(radius > 0, reverse(radius), radius)))
+
+        ax2.set_xticks(data.index, labels=data['compass'])
+        ax2.set_xticklabels(data.compass)
+        ax2.set_rgrids([0, 250, 500, 750, 1000])
+        ax2.bar(x=data.index,align='center', height=data['value'], width=pi/6)
+
+        plt.show()
+
+
+
+
 class distance_sensor:
     # distance sensor class is defined
 
@@ -80,60 +134,14 @@ for i in range(6):
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
 run = driver(0, 2*pi/3, 4*pi/3)
-
-
-#plot function:
-def rosePlot(valueArray):
-    data = pd.DataFrame({'value': valueArray,
-                         'bearing': range(0, 360, 60),
-                         'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
-
-    data.index = data['bearing'] * 2*pi / 360
-    print(data.index)
-    print(data['value'])
-    fig = plt.figure(figsize=(8, 3))
-    gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
-
-    ax1 = fig.add_subplot(gs[0, 0])
-    ax1.bar(x=data['compass'], height=data['value'], width=1)
-    ax1.set_ylim(0, 1000)
-    ax1.spines['bottom'].set_position(('data', 0))  # Move the X axis up
-    ax1.spines['top'].set_position(('axes', 0))
-    ax1.spines['top'].set_linestyle(':')
-
-    ax2 = fig.add_subplot(gs[0, 1], projection='polar')
-    ax2.set_theta_zero_location('S')
-    ax2.set_theta_direction(-1)
-
-    max_value = 1000
-    r_offset = -100
-
-    ax2.set_rlim(0, max_value)
-    ax2.set_rorigin(r_offset)
-
-    r2 = max_value - r_offset
-    alpha = r2 - r_offset
-    v_offset = r_offset**2 / alpha
-    forward = lambda value: ((value + v_offset) * alpha)**0.5 + r_offset
-    reverse = lambda radius: (radius - r_offset) ** 2 / alpha - v_offset
-
-    ax2.set_yscale('function', functions=(
-        lambda value: np.where(value >= 0, forward(value), value),
-        lambda radius: np.where(radius > 0, reverse(radius), radius)))
-
-    ax2.set_xticks(data.index, labels=data['compass'])
-    ax2.set_xticklabels(data.compass)
-    ax2.set_rgrids([0, 250, 500, 750, 1000])
-    ax2.bar(x=data.index,align='center', height=data['value'], width=pi/6)
-
-    plt.show()
-
+data_object = dataDisplay()
 
 # Main loop:
 # - perform simulation steps until Webots is stopping the controller
 
 global_sensor_values = []
 k = 0
+
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
     run.motor_1.setPosition(0)
@@ -152,7 +160,8 @@ while robot.step(timestep) != -1:
     print(current_sensor_values)
 
     if k%500 == 1:
-        rosePlot(current_sensor_values)
+
+        data_object.rosePlot(current_sensor_values)
         pass
     k += 1
     ###################### - Small whells - #####################
