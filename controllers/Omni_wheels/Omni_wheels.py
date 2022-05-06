@@ -9,25 +9,52 @@ import math
 
 plt.style.use('fivethirtyeight')
 
+# Robot is defined
 robot = Robot()
-
-# define variable for later incremental function
-##increment = count()
-
-
-# get the time step of the current world.
+# Get the time step of the current world.
 timestep = int(robot.getBasicTimeStep())
 
-#inseretes
-v = -10
-motor1 = robot.getDevice('wheel1')
-motor2 = robot.getDevice('wheel2')
-motor3 = robot.getDevice('wheel3')
-# class dist_sensor(self, ID):
-#     def __init__():
-#         self.ID = ID
-#     def
+v_len = np.linalg.norm # Length of vector
+pi = math.pi
 
+class driver:
+    def __init__(self, angle1, angle2, angle3):
+        self.motor_1 = robot.getDevice('wheel1')
+        self.motor_2 = robot.getDevice('wheel2')
+        self.motor_3 = robot.getDevice('wheel3')
+        self.angle_1 = angle1
+        self.angle_2 = angle2
+        self.angle_3 = angle3
+
+    def driver(self, distance, angle):
+        dir = self.polar_to_cartesian(angle, distance)
+        m1 = self.polar_to_cartesian(self.angle_1, 1)
+        m2 = self.polar_to_cartesian(self.angle_2, 1)
+        m3 = self.polar_to_cartesian(self.angle_3, 1)
+        v1 = self.vec_pos(m1, dir)
+        v2 = self.vec_pos(m2, dir)
+        v3 = self.vec_pos(m3, dir)
+        self.motor_1.setVelocity(v_len(v1))
+        self.motor_2.setVelocity(v_len(v2))
+        self.motor_3.setVelocity(v_len(v3))
+
+    def polar_to_cartesian(self, angle, length):
+        return np.array([math.cos(angle) * length, math.sin(angle) * length])
+
+    def vec_projection(self, a,b):
+        # print('floats: {}{}'.format(a,b))
+        return (np.dot(a,b)/v_len(b)**2)*b
+
+    def vec_pos(self, a, b):
+        return -1*self.vec_projection(a, b)+b
+
+    def print_var(self):
+        print(self.motor_1)
+        print(self.angle_1)
+        print(self.motor_2)
+        print(self.angle_2)
+        print(self.motor_3)
+        print(self.angle_3)
 class distance_sensor:
     # distance sensor class is defined
 
@@ -46,22 +73,13 @@ class distance_sensor:
         self.sensor.enable(timestep)
         print("sensor {} activated!".format(self.ID+1))
 
-
 dist_sensor= []
 dist_sensor_objects = []
 for i in range(6):
     dist_sensor_objects.append(distance_sensor(i))
-    # dist_sensor.append(dist_sensor_objects[i].sensor())
-
-#distance_sensor_array creation (objects)
-# for i in range(len(dist_sensor_objects)):
-    # dist_sensor.append(robot.getDevice(dist_sensor_objects[i]))
-    # dist_sensor[i].enable(timestep)
-
-
-
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
+run = driver(0, 2*pi/3, 4*pi/3)
 
 
 #plot function:
@@ -118,12 +136,13 @@ global_sensor_values = []
 k = 0
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
-    motor1.setPosition(float('INF'))
-    motor2.setPosition(float('INF'))
-    motor3.setPosition(float('INF'))
-    motor1.setVelocity(0*v)
-    motor2.setVelocity(0*v)
-    motor3.setVelocity(0.4*v)
+    run.motor_1.setPosition(0)
+    run.motor_2.setPosition(0)
+    run.motor_3.setPosition(0)
+
+    run.driver(10,0*pi)
+    # run.print_var()
+
     current_sensor_values = []
     for i in range(len(dist_sensor_objects)):
         # print(dist_sensor_objects[i].sensor)
@@ -136,24 +155,18 @@ while robot.step(timestep) != -1:
         rosePlot(current_sensor_values)
         pass
     k += 1
-
-
-
-
-    #print(global_sensor_values)
-    # class DistanceSensor (Device):
-    #     def enable(self, samplingPeriod):
-    #     def disable(self):
-    #     def getSamplingPeriod(self):
-    #     def getValue(self):
-
-
-
-
-
     ###################### - Small whells - #####################
-    #""" 10 is the max-speed of the small wheels"""
-    #""" Velorcity of the big wheels until  """
-    #motor1.setVelocity(10) #small wheels
-    #motor2.setVelocity(10) #small wheels
-    #motor3.setVelocity(10) #small wheels
+    """ 10 is the max-speed of the small wheels"""
+    # Deprecated functions written without use of numPy:
+
+    # def dot(self, a,b):
+    #     return a[0]*b[0]+a[1]*b[1]
+
+    # def vec_len(self, a):
+    #     return math.sqrt(a[0]**2+a[1]**2)
+
+    # def vec_plus(self, a,b):
+    #     return [a[0]+b[0],a[1]+b[1]]
+
+    # def vec_scalar(self, a ,vet):
+    #     return [a*vet[0], a*vet[1]]
