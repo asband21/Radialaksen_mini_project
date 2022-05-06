@@ -6,6 +6,14 @@ import pandas as pd
 import numpy as np
 import math
 
+"""Notes for self:
+Remaining feature to add:
+    * run opposite of detection
+    *
+
+
+"""
+
 
 plt.style.use('fivethirtyeight')
 
@@ -64,7 +72,7 @@ class dataDisplay:
 
     def rosePlot(self, value_array):
         data = pd.DataFrame({'value': value_array,
-                             'bearing': range(0,360, 60),
+                             'bearing': range(360, 0, -60),
                              'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
         data.index = data['bearing'] * 2*pi / 360
         print(data.index)
@@ -118,7 +126,7 @@ class distance_sensor:
         self.name = 'distance sensor({})'.format(ID+1)
         self.sensor = robot.getDevice(self.name)
         self.activate()
-        self.position = range(0 ,360, 60)[ID]
+        self.position = range(360, 0, -60)[ID]
 
     def get_data(self):
         return self.sensor.getValue()
@@ -148,7 +156,8 @@ while robot.step(timestep) != -1:
     run.motor_2.setPosition(0)
     run.motor_3.setPosition(0)
 
-    run.driver(10,0*pi)
+
+    run.driver(9.5,0*pi)
     # run.print_var()
 
     current_sensor_values = []
@@ -156,8 +165,9 @@ while robot.step(timestep) != -1:
         # print(dist_sensor_objects[i].sensor)
         dist_sensor_objects[i].get_data()
         current_sensor_values.append(dist_sensor_objects[i].get_data())
+    print(dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].position)
     global_sensor_values.append(current_sensor_values)
-    print(current_sensor_values)
+    #print(current_sensor_values)
 
     if k%500 == 1:
 
