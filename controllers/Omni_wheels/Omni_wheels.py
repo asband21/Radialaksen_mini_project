@@ -127,8 +127,8 @@ while robot.step(timestep) != -1:
     current_sensor_values = []
     for i in range(len(dist_sensor_objects)):
         # print(dist_sensor_objects[i].sensor)
-        dist_sensor_objects[i].getdata()
-        current_sensor_values.append(dist_sensor_objects[i].getdata())
+        dist_sensor_objects[i].get_data()
+        current_sensor_values.append(dist_sensor_objects[i].get_data())
     global_sensor_values.append(current_sensor_values)
     print(current_sensor_values)
 
