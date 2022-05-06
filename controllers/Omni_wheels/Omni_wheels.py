@@ -1,7 +1,6 @@
 from controller import Robot, DistanceSensor
 from matplotlib.gridspec import GridSpec
 from matplotlib import pyplot as plt
-from pynput import keyboard
 from numpy import pi
 import pandas as pd
 import numpy as np
@@ -24,13 +23,42 @@ v = -10
 motor1 = robot.getDevice('wheel1')
 motor2 = robot.getDevice('wheel2')
 motor3 = robot.getDevice('wheel3')
-dist_sensor = []
-#distance_sensor_array
-dist_sensor_names = ['distance sensor(1)','distance sensor(2)','distance sensor(3)','distance sensor(4)','distance sensor(5)','distance sensor(6)']#,'distance sensor(7)'] not used -
+# class dist_sensor(self, ID):
+#     def __init__():
+#         self.ID = ID
+#     def
 
-for i in range(len(dist_sensor_names)):
-    dist_sensor.append(robot.getDevice(dist_sensor_names[i]))
-    dist_sensor[i].enable(timestep)
+class distance_sensor:
+    # distance sensor class is defined
+
+    def __init__(self, ID):
+        self.ID = ID
+        super().__init__()
+        self.name = 'distance sensor({})'.format(ID+1)
+        self.sensor = robot.getDevice(self.name)
+        self.activate()
+        self.position = range(0 ,360, 60)[ID]
+
+    def get_data(self):
+        return self.sensor.getValue()
+
+    def activate(self):
+        self.sensor.enable(timestep)
+        print("sensor {} activated!".format(self.ID+1))
+
+
+dist_sensor= []
+dist_sensor_objects = []
+for i in range(6):
+    dist_sensor_objects.append(distance_sensor(i))
+    # dist_sensor.append(dist_sensor_objects[i].sensor())
+
+#distance_sensor_array creation (objects)
+# for i in range(len(dist_sensor_objects)):
+    # dist_sensor.append(robot.getDevice(dist_sensor_objects[i]))
+    # dist_sensor[i].enable(timestep)
+
+
 
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
@@ -43,7 +71,8 @@ def rosePlot(valueArray):
                          'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
 
     data.index = data['bearing'] * 2*pi / 360
-
+    print(data.index)
+    print(data['value'])
     fig = plt.figure(figsize=(8, 3))
     gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
 
@@ -74,9 +103,10 @@ def rosePlot(valueArray):
         lambda value: np.where(value >= 0, forward(value), value),
         lambda radius: np.where(radius > 0, reverse(radius), radius)))
 
+    ax2.set_xticks(data.index, labels=data['compass'])
     ax2.set_xticklabels(data.compass)
-    ax2.set_rgrids([0, 200 ,400, 600, 800, 1000])
-    ax2.bar(x=data.index, height=data['value'], width=pi/4)
+    ax2.set_rgrids([0, 250, 500, 750, 1000])
+    ax2.bar(x=data.index,align='center', height=data['value'], width=pi/6)
 
     plt.show()
 
@@ -95,9 +125,12 @@ while robot.step(timestep) != -1:
     motor2.setVelocity(0*v)
     motor3.setVelocity(0.4*v)
     current_sensor_values = []
-    for i in range(len(dist_sensor)):
-        current_sensor_values.append(dist_sensor[i].getValue())
+    for i in range(len(dist_sensor_objects)):
+        # print(dist_sensor_objects[i].sensor)
+        dist_sensor_objects[i].getdata()
+        current_sensor_values.append(dist_sensor_objects[i].getdata())
     global_sensor_values.append(current_sensor_values)
+    print(current_sensor_values)
 
     if k%500 == 1:
         rosePlot(current_sensor_values)
