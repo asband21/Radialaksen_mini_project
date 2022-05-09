@@ -6,13 +6,7 @@ import pandas as pd
 import numpy as np
 import math
 
-"""Notes for self:
-Remaining feature to add:
-    * run opposite of detection
-    *
 
-
-"""
 
 
 plt.style.use('fivethirtyeight')
@@ -74,9 +68,9 @@ class dataDisplay:
         data = pd.DataFrame({'value': value_array,
                              'bearing': range(360, 0, -60),
                              'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
-        data.index = data['bearing'] * 2*pi / 360
-        print(data.index)
-        print(data['value'])
+        data.index = data['bearing'] * 2 * pi / 360
+        # print(data.index)
+        # print(data['value'])
         fig = plt.figure(figsize=(8, 3))
         gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
 
@@ -126,7 +120,7 @@ class distance_sensor:
         self.name = 'distance sensor({})'.format(ID+1)
         self.sensor = robot.getDevice(self.name)
         self.activate()
-        self.position = range(360, 0, -60)[ID]
+        self.position = range(360, 0, -60)[ID] * 2 * pi / 360
 
     def get_data(self):
         return self.sensor.getValue()
@@ -149,7 +143,7 @@ data_object = dataDisplay()
 
 global_sensor_values = []
 k = 0
-
+h = 0
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
     run.motor_1.setPosition(0)
@@ -157,7 +151,7 @@ while robot.step(timestep) != -1:
     run.motor_3.setPosition(0)
 
 
-    run.driver(9.5,0*pi)
+
     # run.print_var()
 
     current_sensor_values = []
@@ -165,7 +159,17 @@ while robot.step(timestep) != -1:
         # print(dist_sensor_objects[i].sensor)
         dist_sensor_objects[i].get_data()
         current_sensor_values.append(dist_sensor_objects[i].get_data())
-    print(dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].position)
+    # mAngle = angle of max value distance sensor (Max Angle)
+    mAngle = dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].position
+
+    if dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].get_data() >= 200:
+        run.driver(9.5,pi+mAngle)
+    else:
+        if h == 0:
+            run.driver(9.5,0*pi)
+            h =+ 1
+        else:
+            pass
     global_sensor_values.append(current_sensor_values)
     #print(current_sensor_values)
 
