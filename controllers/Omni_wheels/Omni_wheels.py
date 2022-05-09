@@ -6,6 +6,9 @@ import pandas as pd
 import numpy as np
 import math
 
+
+
+
 plt.style.use('fivethirtyeight')
 
 # Robot is defined
