@@ -187,10 +187,17 @@ while robot.step(timestep) != -1:
         current_sensor_values.append(dist_sensor_objects[i].get_data())
     # mAngle = angle of max value distance sensor (Max Angle)
     mAngle = dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].position
+    sum_angle = [0,0]
+    for i in range(6):
+        sum_angle = sum_angle + run.polar_to_cartesian(dist_sensor_objects[i].position,dist_sensor_objects[i].get_data())
+    print("sum_angle: {} , \nlen: {}".format(sum_angle,v_len(sum_angle)))
 
-    if dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].get_data() >= 600:
-        run.driver(10,mAngle)
-        print("mAngle:"+str(mAngle))
+
+
+
+    if v_len(sum_angle) >= 100:
+        run.driver(10,math.atan2(sum_angle[1], sum_angle[0]))
+        # print("mAngle:"+str(math.atan2(sum_angle[1], sum_angle[0])))
     else:
         if h == 0:
             run.driver(10,2*pi/3)
