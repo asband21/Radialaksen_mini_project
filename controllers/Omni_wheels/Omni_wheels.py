@@ -33,12 +33,37 @@ class driver:
         m1 = self.polar_to_cartesian(self.angle_1, 1)
         m2 = self.polar_to_cartesian(self.angle_2, 1)
         m3 = self.polar_to_cartesian(self.angle_3, 1)
-        v1 = self.vec_pos(m1, dir)
-        v2 = self.vec_pos(m2, dir)
-        v3 = self.vec_pos(m3, dir)
-        self.motor_1.setVelocity(v_len(v1))
-        self.motor_2.setVelocity(v_len(v2))
-        self.motor_3.setVelocity(v_len(v3))
+        rot_matrix = np.array([[0,-1],[1,0]])
+        v1 = self.vec_pos(dir, m1)
+        v2 = self.vec_pos(dir, m2)
+        v3 = self.vec_pos(dir, m3)
+        #print("v2: {} m2: {} dot: {}".format(v2[0],m2,rot_matrix@m2@v2[0]))
+
+        # for i in range(len(vel_list)):
+        #     vel_list_mod.append((vel_list[i]/max(np.absolute(vel_list)))*distance)
+        #     print("Early"+str(vel_list_mod))
+
+        print("dir: {} m1: {} m2: {} m3: {}v1: {} v2: {} v3: {} ".format(dir,m1,m2,m3,v1,v2,v3))
+
+
+        if  0 != v_len(v1):
+            self.motor_1.setVelocity(v_len(v1)*(rot_matrix@m1@(v1[0]/v_len(v1))))
+            print("v1 flipspeed:"+str(rot_matrix@m2@(v1[0]/v_len(v1))))
+        else :
+            self.motor_1.setVelocity(0)
+            print("help1")
+        if 0 != v_len(v2):
+            self.motor_2.setVelocity(v_len(v2)*(rot_matrix@m2@(v2[0]/v_len(v2))))
+            print(rot_matrix@m2@(v2[0]/v_len(v2)))
+        else :
+            self.motor_2.setVelocity(0)
+            print("help2")
+        if 0 != v_len(v3):
+            self.motor_3.setVelocity(v_len(v3)*((rot_matrix@m3)@(v3[0]/v_len(v3))))
+            print((rot_matrix@m2)@(v3[0]/v_len(v3)))
+        else :
+            self.motor_3.setVelocity(0)
+            print("help3")
 
     def polar_to_cartesian(self, angle, length):
         return np.array([math.cos(angle) * length, math.sin(angle) * length])
@@ -48,7 +73,7 @@ class driver:
         return (np.dot(a,b)/v_len(b)**2)*b
 
     def vec_pos(self, a, b):
-        return -1*self.vec_projection(a, b)+b
+        return [a-self.vec_projection(a, b)]
 
     def print_var(self):
         print(self.motor_1)
@@ -119,8 +144,8 @@ class distance_sensor:
         super().__init__()
         self.name = 'distance sensor({})'.format(ID+1)
         self.sensor = robot.getDevice(self.name)
+        self.position = range(0, 360, 60)[ID] * 2 * pi / 360
         self.activate()
-        self.position = range(360, 0, -60)[ID] * 2 * pi / 360
 
     def get_data(self):
         return self.sensor.getValue()
@@ -129,14 +154,16 @@ class distance_sensor:
         self.sensor.enable(timestep)
         print("sensor {} activated!".format(self.ID+1))
 
+
 dist_sensor= []
 dist_sensor_objects = []
 for i in range(6):
     dist_sensor_objects.append(distance_sensor(i))
+    # print(dist_sensor_objects[i].position)
 ds = robot.getDevice('position_sensor_wheel1')
 ds.enable(timestep)
 run = driver(0, 2*pi/3, 4*pi/3)
-data_object = dataDisplay()
+data_object = data_display()
 
 # Main loop:
 # - perform simulation steps until Webots is stopping the controller
@@ -146,10 +173,9 @@ k = 0
 h = 0
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
-    run.motor_1.setPosition(0)
-    run.motor_2.setPosition(0)
-    run.motor_3.setPosition(0)
-
+    run.motor_1.setPosition(float('inf'))
+    run.motor_2.setPosition(float('inf'))
+    run.motor_3.setPosition(float('inf'))
 
 
     # run.print_var()
@@ -162,11 +188,12 @@ while robot.step(timestep) != -1:
     # mAngle = angle of max value distance sensor (Max Angle)
     mAngle = dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].position
 
-    if dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].get_data() >= 200:
-        run.driver(9.5,pi+mAngle)
+    if dist_sensor_objects[current_sensor_values.index(max(current_sensor_values))].get_data() >= 600:
+        run.driver(10,mAngle)
+        print("mAngle:"+str(mAngle))
     else:
         if h == 0:
-            run.driver(9.5,0*pi)
+            run.driver(10,2*pi/3)
             h =+ 1
         else:
             pass
@@ -175,7 +202,7 @@ while robot.step(timestep) != -1:
 
     if k%500 == 1:
 
-        data_object.rosePlot(current_sensor_values)
+        #data_object.rosePlot(current_sensor_values)
         pass
     k += 1
     ###################### - Small whells - #####################
