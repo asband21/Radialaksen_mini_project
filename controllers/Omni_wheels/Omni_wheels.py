@@ -5,14 +5,13 @@ from numpy import pi
 import pandas as pd
 import numpy as np
 import math
-
+# Plotting style
 plt.style.use('fivethirtyeight')
 
 # Robot is defined
 robot = Robot()
 # Get the time step of the current world.
 timestep = int(robot.getBasicTimeStep())
-
 v_len = np.linalg.norm # Length of vector
 pi = math.pi
 
@@ -26,39 +25,39 @@ class driver:
         self.angle_3 = angle3
 
     def driver(self, distance, angle):
+        # Dir is inputted distance and angle of direction of movement, desired. It is converted to cartesian, just as m1...m3
         dir = self.polar_to_cartesian(angle, distance)
+        # Motor positional vectors convert to Cartesian unit vectors
         m1 = self.polar_to_cartesian(self.angle_1, 1)
         m2 = self.polar_to_cartesian(self.angle_2, 1)
         m3 = self.polar_to_cartesian(self.angle_3, 1)
-        rot_matrix = np.array([[0,-1],[1,0]])
+        rot_matrix = np.array([[0,-1],[1,0]])  # Rotation array, used for determining
+                                               # direction of vecocity vectors below in the following if statements
         v1 = self.vec_pos(dir, m1)
         v2 = self.vec_pos(dir, m2)
         v3 = self.vec_pos(dir, m3)
-       
+
         print("dir: {} m1: {} m2: {} m3: {}v1: {} v2: {} v3: {} ".format(dir,m1,m2,m3,v1,v2,v3))
 
-        #these if-staments are inner produkt of two vecotors. m_n is motor postions and v_n (n is number of particular motor).   
-        # There is determined if the two vectors are parrale and in what dirrection relations are between them.  
-        # if the inner product between two vectors is -1, then the vectors are parrale but poitns in each opsesit dirrection. 
-        #  When the inner product is 1, then the two vectors poitns at the same dirrection. 
+        # These if-staments are inner produkt of two vectors. m_n is motor postions and v_n is velocity of motor (n is number of particular motor).
+        # It is determined if the two vectors are parallel and in direction relations are between them.
+        # If the inner product between m_n and v_n vectors are -1, then the vectors are parrale but point in opposite directions.
+        # When the inner product is 1, the two vectors point in the same direction.
         if  0 != v_len(v1):
             self.motor_1.setVelocity(v_len(v1)*(rot_matrix@m1@(v1[0]/v_len(v1))))
-            print("v1 flipspeed:"+str(rot_matrix@m2@(v1[0]/v_len(v1))))
+            # print("v1 flipspeed:"+str(rot_matrix@m2@(v1[0]/v_len(v1))))
         else :
             self.motor_1.setVelocity(0)
-            print("help1")
         if 0 != v_len(v2):
             self.motor_2.setVelocity(v_len(v2)*(rot_matrix@m2@(v2[0]/v_len(v2))))
-            print(rot_matrix@m2@(v2[0]/v_len(v2)))
+            # print(rot_matrix@m2@(v2[0]/v_len(v2)))
         else :
             self.motor_2.setVelocity(0)
-            print("help2")
         if 0 != v_len(v3):
             self.motor_3.setVelocity(v_len(v3)*((rot_matrix@m3)@(v3[0]/v_len(v3))))
-            print((rot_matrix@m2)@(v3[0]/v_len(v3)))
+            # print((rot_matrix@m2)@(v3[0]/v_len(v3)))
         else :
             self.motor_3.setVelocity(0)
-            print("help3")
 
     def polar_to_cartesian(self, angle, length):
         return np.array([math.cos(angle) * length, math.sin(angle) * length])
@@ -80,40 +79,36 @@ class driver:
 #plot object and method:
 class data_display:
     def __init__(self, ):
-        self.max_value = 1000
+        self.max_value = 1000   # integer parameters used for determining size of roseplot.
         self.r_offset = -100
 
     def rosePlot(self, value_array):
         data = pd.DataFrame({'value': value_array,
                              'bearing': range(360, 0, -60),
                              'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
-        data.index = data['bearing'] * 2 * pi / 360
-       
-        fig = plt.figure(figsize=(8, 3))
-        gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
+        data.index = data['bearing'] * 2 * pi / 360                         # Conversion to radians
 
-        ax1 = fig.add_subplot(gs[0, 0])
-        ax1.bar(x=data['compass'], height=data['value'], width=1)
-        ax1.set_ylim(0, 1000)
+        fig = plt.figure(figsize=(8, 3))                                    # Size of window plotting and initialisation
+        gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])                # Plot two plots in a column of same width along each other horizontally.
+
+        ax1 = fig.add_subplot(gs[0, 0]) # plot                              # Bar plot on left.
+        ax1.bar(x=data['compass'], height=data['value'], width=1)           # XY defined
+        ax1.set_ylim(0, self.max_value)
         ax1.spines['bottom'].set_position(('data', 0))  # Move the X axis up
         ax1.spines['top'].set_position(('axes', 0))
         ax1.spines['top'].set_linestyle(':')
 
-        ax2 = fig.add_subplot(gs[0, 1], projection='polar')
-        ax2.set_theta_zero_location('S')
+        ax2 = fig.add_subplot(gs[0, 1], projection='polar')                 # ax2 is a polar plot (roseplot)
+        ax2.set_theta_zero_location('S')                                    # First sensor is in South direction of polar plot
         ax2.set_theta_direction(-1)
 
-        max_value = 1000
-        r_offset = -100
+        ax2.set_rlim(0, self.max_value)
+        ax2.set_rorigin(self.r_offset)
 
-        ax2.set_rlim(0, max_value)
-        ax2.set_rorigin(r_offset)
-
-        r2 = max_value - r_offset
-        alpha = r2 - r_offset
-        v_offset = r_offset**2 / alpha
-        forward = lambda value: ((value + v_offset) * alpha)**0.5 + r_offset
-        reverse = lambda radius: (radius - r_offset) ** 2 / alpha - v_offset
+        alpha = self.max_value - 2*self.r_offset   # Polar plot is made 200 wider, to account for 0 starting at radius 100, and leaving 100 extra space.
+        v_offset = self.r_offset**2 / alpha
+        forward = lambda value: ((value + v_offset) * alpha)**0.5 + self.r_offset
+        reverse = lambda radius: (radius - self.r_offset) ** 2 / alpha - v_offset
 
         ax2.set_yscale('function', functions=(
             lambda value: np.where(value >= 0, forward(value), value),
@@ -162,11 +157,13 @@ data_object = data_display()
 # - perform simulation steps until Webots is stopping the controller
 
 global_sensor_values = []
+# two arbitrarily declared variables used for one time operations,
+# such as initial movement before spotting targetbot.
 k = 0
 h = 0
 while robot.step(timestep) != -1:
    ###################### - Big wheels - ###########################
-    run.motor_1.setPosition(float('inf'))
+    run.motor_1.setPosition(float('inf'))  # Motors set to always be adjustable in speed
     run.motor_2.setPosition(float('inf'))
     run.motor_3.setPosition(float('inf'))
 
