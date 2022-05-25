@@ -6,9 +6,6 @@ import pandas as pd
 import numpy as np
 import math
 
-
-
-
 plt.style.use('fivethirtyeight')
 
 # Robot is defined
@@ -37,15 +34,13 @@ class driver:
         v1 = self.vec_pos(dir, m1)
         v2 = self.vec_pos(dir, m2)
         v3 = self.vec_pos(dir, m3)
-        #print("v2: {} m2: {} dot: {}".format(v2[0],m2,rot_matrix@m2@v2[0]))
-
-        # for i in range(len(vel_list)):
-        #     vel_list_mod.append((vel_list[i]/max(np.absolute(vel_list)))*distance)
-        #     print("Early"+str(vel_list_mod))
-
+       
         print("dir: {} m1: {} m2: {} m3: {}v1: {} v2: {} v3: {} ".format(dir,m1,m2,m3,v1,v2,v3))
 
-
+        #these if-staments are inner produkt of two vecotors. m_n is motor postions and v_n (n is number of particular motor).   
+        # There is determined if the two vectors are parrale and in what dirrection relations are between them.  
+        # if the inner product between two vectors is -1, then the vectors are parrale but poitns in each opsesit dirrection. 
+        #  When the inner product is 1, then the two vectors poitns at the same dirrection. 
         if  0 != v_len(v1):
             self.motor_1.setVelocity(v_len(v1)*(rot_matrix@m1@(v1[0]/v_len(v1))))
             print("v1 flipspeed:"+str(rot_matrix@m2@(v1[0]/v_len(v1))))
@@ -69,7 +64,6 @@ class driver:
         return np.array([math.cos(angle) * length, math.sin(angle) * length])
 
     def vec_projection(self, a,b):
-        # print('floats: {}{}'.format(a,b))
         return (np.dot(a,b)/v_len(b)**2)*b
 
     def vec_pos(self, a, b):
@@ -94,8 +88,7 @@ class data_display:
                              'bearing': range(360, 0, -60),
                              'compass': ['S1', 'S12', 'S2', 'S23', 'S3', 'S31']})
         data.index = data['bearing'] * 2 * pi / 360
-        # print(data.index)
-        # print(data['value'])
+       
         fig = plt.figure(figsize=(8, 3))
         gs = GridSpec(nrows=1, ncols=2, width_ratios=[1, 1])
 
@@ -193,8 +186,6 @@ while robot.step(timestep) != -1:
     print("sum_angle: {} , \nlen: {}".format(sum_angle,v_len(sum_angle)))
 
 
-
-
     if v_len(sum_angle) >= 100:
         run.driver(10,math.atan2(sum_angle[1], sum_angle[0]))
         # print("mAngle:"+str(math.atan2(sum_angle[1], sum_angle[0])))
@@ -205,25 +196,9 @@ while robot.step(timestep) != -1:
         else:
             pass
     global_sensor_values.append(current_sensor_values)
-    #print(current_sensor_values)
 
     if k%500 == 1:
 
-        #data_object.rosePlot(current_sensor_values)
+        data_object.rosePlot(current_sensor_values) #When out-comment the plots are disabled.
         pass
     k += 1
-    ###################### - Small whells - #####################
-    """ 10 is the max-speed of the small wheels"""
-    # Deprecated functions written without use of numPy:
-
-    # def dot(self, a,b):
-    #     return a[0]*b[0]+a[1]*b[1]
-
-    # def vec_len(self, a):
-    #     return math.sqrt(a[0]**2+a[1]**2)
-
-    # def vec_plus(self, a,b):
-    #     return [a[0]+b[0],a[1]+b[1]]
-
-    # def vec_scalar(self, a ,vet):
-    #     return [a*vet[0], a*vet[1]]
